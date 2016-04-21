@@ -24,7 +24,7 @@
  * @subpackage Syngency/includes
  * @author     Ryan Marshall <ryan@syngency.com>
  */
-class Plugin_Name_i18n {
+class Syngency_i18n {
 
 
 	/**

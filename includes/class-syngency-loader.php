@@ -21,7 +21,7 @@
  * @subpackage Syngency/includes
  * @author     Ryan Marshall <ryan@syngency.com>
  */
-class Plugin_Name_Loader {
+class Syngency_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.
