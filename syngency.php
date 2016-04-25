@@ -38,16 +38,8 @@ function deactivate_syngency() {
 
 }
 
-/**
- * The code that runs when plugin is uninstalled.
- */
-function uninstall_syngency() {
-	delete_option( 'syngency_options' );
-}
-
 register_activation_hook( __FILE__, 'activate_syngency' );
 register_deactivation_hook( __FILE__, 'deactivate_syngency' );
-register_uninstall_hook ( __FILE__, 'uninstall_syngency' );
 
 /**
  * The core plugin class that is used to define internationalization,
