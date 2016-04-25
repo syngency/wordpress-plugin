@@ -51,7 +51,79 @@ class Syngency_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->options = get_option( 'syngency_option_name' );
 
+		add_shortcode('syngency-division', array($this, 'get_division'));
+		add_shortcode('syngency-model', array($this, 'get_model'));
+
+	}
+
+	public function parse_template($template,$data)
+	{
+		extract($data);
+		include(__DIR__  . '/templates/syngency-' . $template . '.php');
+	}
+
+	public function get_division( $atts ) {
+
+		$url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['url'] . '.json';
+		$args = array(
+		  'headers' => array(
+		    'Authorization' => 'API-Key ' . $this->options['api_key']
+		  )
+		);
+		$response = wp_remote_request( $url, $args );
+		if ( wp_remote_retrieve_response_code($response) == 200 )
+		{
+			$body = wp_remote_retrieve_body($response);
+			$models = json_decode($body);
+			$output = $this->parse_template('division',array('models' => $models));
+		}
+		else
+		{
+			$output = false;
+		}
+		return $output;
+	}
+
+	public function get_model( $atts ) {
+	
+		$model = false;
+		if ( isset($atts['url']) )
+		{
+			// Use URL supplied by shortcode
+			$model_url = $atts['url'];
+		}
+		else
+		{
+			// Use URL supplied by query var
+			$model_url = $_GET['url'];
+		}
+
+		if ( !$model_url )
+		{
+			return false;
+		}
+
+		$url = 'http://' . $this->options['domain'] . '/portfolios/' . $model_url . '.json';
+		$args = array(
+		  'headers' => array(
+		    'Authorization' => 'API-Key ' . $this->options['api_key']
+		  )
+		);
+		$response = wp_remote_request( $url, $args );
+		if ( wp_remote_retrieve_response_code($response) == 200 )
+		{
+			$body = wp_remote_retrieve_body($response);	
+			$model = json_decode($body);
+			$output = $this->parse_template('model',array('model' => $model));
+		}
+		else
+		{
+			$output = false;
+		}
+		return $output;
+	
 	}
 
 	/**

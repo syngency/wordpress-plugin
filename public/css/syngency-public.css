@@ -1,0 +1,66 @@
+.syngency-division-model {
+	display: inline-block;
+	width: auto;
+	text-align: center;
+	text-decoration: none;
+	margin: 0 20px 20px 0;
+}
+
+.syngency-division-model-headshot {
+	padding: 5px;
+	border: 1px solid #eee;
+	margin-bottom: 10px;
+}
+
+.syngency-division-model-name {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: #191919;
+	letter-spacing: 0.5px;
+}
+
+.syngency-model-measurements {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.syngency-model-measurements li {
+	display: inline;
+	margin-right: 15px;
+}
+
+.syngency-model-measurements li:last-child {
+	margin-right: 0;
+}
+
+.syngency-model-measurements .label {
+	color: #acacac;
+}
+
+.syngency-model-measurements .value {
+	font-weight: bold;
+}
+
+.syngency-model-gallery ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.syngency-model-gallery li {
+	display: inline;
+	margin-right: 15px;
+}
+
+.syngency-model-gallery-image a {
+	display: inline-block;
+	text-decoration: none !important;
+	margin: 0 15px 15px 0;
+}
+
+.syngency-model-gallery-image a img {
+	display: inline-block !important;
+}

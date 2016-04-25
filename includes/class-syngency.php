@@ -68,7 +68,7 @@ class Syngency {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'Syngency';
+		$this->plugin_name = 'syngency';
 		$this->version = '1.0.0';
 
 		$this->load_dependencies();
