@@ -54,26 +54,39 @@ class Syngency_Admin {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'page_init' ) );
 
-        // Measurements defaults
-        $this->measurements = ['Height',
-            'Bust',
-            'Waist',
-            'Hip',
-            'Dress',
-            'Shoe',
-            'Chest',
-            'Suit',
-            'Collar',
-            'Cup',
-            'Inseam',
-            'Sleeve',
-            'Weight',
-            'Outseam',
-            'Apparel',
+        // Measurement options
+        $this->measurements = [
+            __( 'Height', 'syngency' ),
+            __( 'Bust', 'syngency' ),
+            __( 'Waist', 'syngency' ),
+            __( 'Hip', 'syngency' ),
+            __( 'Dress', 'syngency' ),
+            __( 'Shoe', 'syngency' ),
+            __( 'Hair', 'syngency' ),
+            __( 'Eyes', 'syngency' ),
+            __( 'Chest', 'syngency' ),
+            __( 'Suit', 'syngency' ),
+            __( 'Collar', 'syngency' ),
+            __( 'Cup', 'syngency' ),
+            __( 'Inseam', 'syngency' ),
+            __( 'Sleeve', 'syngency' ),
+            __( 'Weight', 'syngency' ),
+            __( 'Outseam', 'syngency' ),
+            __( 'Apparel', 'syngency' ),
         ];
+        // Measurement defaults
         if ( !is_array($this->options['measurements']) )
         {
-            $this->options['measurements'] = ['Height','Bust','Waist','Hip','Dress','Shoe'];
+            $this->options['measurements'] = [
+                __( 'Height', 'syngency' ),
+                __( 'Bust', 'syngency' ),
+                __( 'Waist', 'syngency' ),
+                __( 'Hip', 'syngency' ),
+                __( 'Dress', 'syngency' ),
+                __( 'Shoe', 'syngency' ),
+                __( 'Hair', 'syngency' ),
+                __( 'Eyes', 'syngency' ),
+            ];
         }
 
 	}

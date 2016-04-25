@@ -32,18 +32,21 @@
 			<?php endif; ?>
 		</li>
 		<?php endforeach; ?>
+		<?php if ( in_array('Hair', $this->options['measurements']) ): ?>
 		<li>
 			<span class="label">Hair</span>
 			<span class="value"><?php echo $model->hair_color; ?></span>
 		</li>
+		<?php endif; ?>
+		<?php if ( in_array('Eyes', $this->options['measurements']) ): ?>
 		<li>
 			<span class="label">Eyes</span>
 			<span class="value"><?php echo $model->eye_color; ?></span>
 		</li>
+		<?php endif; ?>
 	</ul>
 
 	<?php foreach ( $model->galleries as $gallery ): ?>
-
 	<div class="syngency-model-gallery <?php echo $gallery->url; ?>">
 		<h3><?php echo $gallery->name; ?></h3>
 		<ul>

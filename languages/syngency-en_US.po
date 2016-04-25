@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Syngency WordPress Plugin 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-04-25 13:09+0100\n"
+"PO-Revision-Date: 2016-04-25 23:31+1200\n"
+"Language-Team: Ryan Marshall <ryan@syngency.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Generator: Poedit 1.8.7\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en_US\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ../admin/class-syngency-admin.php:59
+msgid "Height"
+msgstr "Height!!!!"
+
+#: ../admin/class-syngency-admin.php:60
+msgid "Bust"
+msgstr "Bust"
+
+#: ../admin/class-syngency-admin.php:61
+msgid "Waist"
+msgstr "Waist"
+
+#: ../admin/class-syngency-admin.php:62
+msgid "Hip"
+msgstr "Hip"
+
+#: ../admin/class-syngency-admin.php:63
+msgid "Dress"
+msgstr "Dress"
+
+#: ../admin/class-syngency-admin.php:64
+msgid "Shoe"
+msgstr "Shoe"
+
+#: ../admin/class-syngency-admin.php:65
+msgid "Hair"
+msgstr "Hair"
+
+#: ../admin/class-syngency-admin.php:66
+msgid "Eyes"
+msgstr "Eyes"
+
+#: ../admin/class-syngency-admin.php:67
+msgid "Chest"
+msgstr "Chest"
+
+#: ../admin/class-syngency-admin.php:68
+msgid "Suit"
+msgstr "Suit"
+
+#: ../admin/class-syngency-admin.php:69
+msgid "Collar"
+msgstr "Collar"
+
+#: ../admin/class-syngency-admin.php:70
+msgid "Cup"
+msgstr "Cup"
+
+#: ../admin/class-syngency-admin.php:71
+msgid "Inseam"
+msgstr "Inseam"
+
+#: ../admin/class-syngency-admin.php:72
+msgid "Sleeve"
+msgstr "Sleeve"
+
+#: ../admin/class-syngency-admin.php:73
+msgid "Weight"
+msgstr "Weight"
+
+#: ../admin/class-syngency-admin.php:74
+msgid "Outseam"
+msgstr "Outseam"
+
+#: ../admin/class-syngency-admin.php:75
+msgid "Apparel"
+msgstr "Apparel"

@@ -10,13 +10,14 @@
  * @syngency-wordpress-plugin
  * Plugin Name:       Syngency
  * Plugin URI:        http://syngency.com/add-ons/wordpress/
- * Description:       Displays your Syngency models and galleries on your WordPress site
+ * Description:       Displays your Syngency divisions, models, and galleries on your WordPress site
  * Version:           1.0.0
  * Author:            Syngency
  * Author URI:        http://syngency.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Requirements:      cURL
+ * Text Domain: 	  syngency
+ * Domain Path: 	  /languages
  */
 
 // If this file is called directly, abort.
@@ -28,7 +29,7 @@ if ( ! defined( 'WPINC' ) ) {
  * The code that runs during plugin activation.
  */
 function activate_syngency() {
-
+	delete_option('syngency_option_name'); // Deprecated
 }
 
 /**
