@@ -18,7 +18,10 @@
 	<h2><?php echo $model->display_name; ?></h2>
 
 	<ul class="syngency-model-measurements">
-		<?php foreach ( $model->measurements as $measurement ): ?>
+		<?php foreach ( $model->measurements as $measurement ):
+			// Skip measurement if not set as visible
+			if ( !in_array($measurement->name, $this->options['measurements']) ) continue;	
+		?>
 		<li>
 			<span class="label"><?php echo $measurement->name; ?></span>
 			<?php if ( isset($measurement->imperial) ): ?>
@@ -29,6 +32,14 @@
 			<?php endif; ?>
 		</li>
 		<?php endforeach; ?>
+		<li>
+			<span class="label">Hair</span>
+			<span class="value"><?php echo $model->hair_color; ?></span>
+		</li>
+		<li>
+			<span class="label">Eyes</span>
+			<span class="value"><?php echo $model->eye_color; ?></span>
+		</li>
 	</ul>
 
 	<?php foreach ( $model->galleries as $gallery ): ?>

@@ -43,13 +43,38 @@ class Syngency_Admin {
      * Holds the values to be used in the fields callbacks
      */
     private $options;
+    private $measurements;
 
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+        $this->options = get_option( 'syngency_options' );
+
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'page_init' ) );
+
+        // Measurements defaults
+        $this->measurements = ['Height',
+            'Bust',
+            'Waist',
+            'Hip',
+            'Dress',
+            'Shoe',
+            'Chest',
+            'Suit',
+            'Collar',
+            'Cup',
+            'Inseam',
+            'Sleeve',
+            'Weight',
+            'Outseam',
+            'Apparel',
+        ];
+        if ( !is_array($this->options['measurements']) )
+        {
+            $this->options['measurements'] = ['Height','Bust','Waist','Hip','Dress','Shoe'];
+        }
 
 	}
 
@@ -72,9 +97,6 @@ class Syngency_Admin {
      */
     public function create_admin_page()
     {
-        // Set class property
-        $this->options = get_option( 'syngency_option_name' );
-
         ?>
         <div class="wrap">
             <h2>Syngency</h2>           
@@ -96,7 +118,7 @@ class Syngency_Admin {
     {        
         register_setting(
             'syngency_option_group', // Option group
-            'syngency_option_name', // Option name
+            'syngency_options', // Option name
             array( $this, 'sanitize' ) // Sanitize
         );
 
@@ -130,23 +152,13 @@ class Syngency_Admin {
             'syngency-admin' // Page
         );
 
-        /*
         add_settings_field(
-            'division_page_id', 
-            'Division',
-            array( $this, 'division_page_callback' ),
+            'measurements', 
+            'Measurements',
+            array( $this, 'measurements_callback' ),
             'syngency-admin', 
             'wordpress_settings'
         );
-
-        add_settings_field(
-            'portfolio_page_id', 
-            'Portfolio', 
-            array( $this, 'portfolio_page_callback' ),
-            'syngency-admin', 
-            'wordpress_settings'
-        );
-        */
         
     }
 
@@ -158,9 +170,16 @@ class Syngency_Admin {
     public function sanitize( $input )
     {
         $new_input = array();
-        foreach ( $input as $key => $value )
+        if ( is_string($value) )
         {
-        	$new_input[$key] = sanitize_text_field($value);
+            foreach ( $input as $key => $value )
+            {
+                $new_input[$key] = sanitize_text_field($value);
+            }            
+        }
+        else
+        {
+            $new_input = $input;
         }
         return $new_input;
     }
@@ -179,7 +198,7 @@ class Syngency_Admin {
      */
     public function wordpress_settings_info()
     {
-        echo '<p>Select the WordPress pages used to display your Syngency content:</p>';
+        echo '<p>Choose how Syngency content is displayed on your WordPress site.</p>';
     }
 
     /** 
@@ -188,7 +207,7 @@ class Syngency_Admin {
     public function domain_callback()
     {
         printf(
-            '<input type="text" id="domain" name="syngency_option_name[domain]" value="%s" />',
+            '<input type="text" id="domain" name="syngency_options[domain]" value="%s" />',
             isset( $this->options['domain'] ) ? esc_attr( $this->options['domain']) : ''
         );
     }
@@ -199,31 +218,22 @@ class Syngency_Admin {
     public function api_key_callback()
     {
         printf(
-            '<input type="text" id="api_key" name="syngency_option_name[api_key]" value="%s" />',
+            '<input type="text" id="api_key" name="syngency_options[api_key]" value="%s" />',
             isset( $this->options['api_key'] ) ? esc_attr( $this->options['api_key']) : ''
         );
     }
 
-    public function division_page_callback()
+    public function measurements_callback()
     {
-        echo '<select name="syngency_option_name[division_page_id]">';
-        foreach ( $this->pages as $page )
+        echo '<select name="syngency_options[measurements][]" multiple="multiple" style="width:200px;height:250px">';
+        foreach ( $this->measurements as $measurement )
         {
-            echo '<option value="' . $page->ID . '"';
-            if ( $this->options['division_page_id'] == $page->ID ) echo ' selected="selected"';
-            echo '>' . $page->post_title . '</option>';
-        }
-        echo '</select>';
-    }
-
-    public function portfolio_page_callback()
-    {
-        echo '<select name="syngency_option_name[portfolio_page_id]">';
-        foreach ( $this->pages as $page )
-        {
-            echo '<option value="' . $page->ID . '"';
-            if ( $this->options['portfolio_page_id'] == $page->ID ) echo ' selected="selected"';
-            echo '>' . $page->post_title . '</option>';
+            echo '<option';
+            if ( in_array($measurement, $this->options['measurements']) )
+            {
+                echo ' selected="selected"';
+            }
+            echo '>' . $measurement . '</option>';
         }
         echo '</select>';
     }
@@ -233,25 +243,21 @@ class Syngency_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-    /*
 	public function enqueue_styles() {
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syngency.css', array(), $this->version, 'all' );
+		//wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syngency.css', array(), $this->version, 'all' );
 
 	}
-    */
 
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
 	 * @since    1.0.0
 	 */
-    /*
 	public function enqueue_scripts() {
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
+		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
 
 	}
-    */
 
 }

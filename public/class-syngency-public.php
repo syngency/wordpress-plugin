@@ -51,7 +51,7 @@ class Syngency_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->options = get_option( 'syngency_option_name' );
+		$this->options = get_option( 'syngency_options' );
 
 		add_shortcode('syngency-division', array($this, 'get_division'));
 		add_shortcode('syngency-model', array($this, 'get_model'));
