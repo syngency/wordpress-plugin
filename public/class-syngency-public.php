@@ -66,13 +66,13 @@ class Syngency_Public {
 
 	public function get_division( $atts ) {
 
-		$url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['url'] . '.json';
-		$args = array(
+		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['url'] . '.json';
+		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
 		  )
 		);
-		$response = wp_remote_request( $url, $args );
+		$response = wp_remote_request( $request_url, $request_args );
 		if ( wp_remote_retrieve_response_code($response) == 200 )
 		{
 			$body = wp_remote_retrieve_body($response);
@@ -87,36 +87,69 @@ class Syngency_Public {
 	}
 
 	public function get_model( $atts ) {
-	
-		$model = false;
+
 		if ( isset($atts['url']) )
 		{
-			// Use URL supplied by shortcode
-			$model_url = $atts['url'];
+			// Use ID set by shortcode
+			$url = $atts['url'];
 		}
 		else
 		{
-			// Use URL supplied by query var
-			$model_url = $_GET['url'];
+			// Use ID set by query string var
+			$url = $_GET['url'];
 		}
 
-		if ( !$model_url )
+		if ( !isset($url) )
 		{
 			return false;
 		}
+		else
+		{
+			// Check if a gallery URL has also been supplied
+			if ( strpos($url,'/') === FALSE )
+			{
+				$model_url = $url;
+			}
+			else
+			{
+				$url = explode('/',$url);
+				$model_url = $url[0];
+				$gallery_url = $url[1];
+			}
+		}
 
-		$url = 'http://' . $this->options['domain'] . '/portfolios/' . $model_url . '.json';
-		$args = array(
+		$request_url = 'http://' . $this->options['domain'] . '/portfolios/' . $model_url . '.json';
+		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
 		  )
 		);
-		$response = wp_remote_request( $url, $args );
+		$response = wp_remote_request( $request_url, $request_args );
 		if ( wp_remote_retrieve_response_code($response) == 200 )
 		{
 			$body = wp_remote_retrieve_body($response);	
 			$model = json_decode($body);
-			$output = $this->parse_template('model',array('model' => $model));
+			$model->url = sanitize_title($model->display_name); // Override Syngency default
+
+			// Set current gallery if set previously
+			if ( isset($gallery_url) )
+			{
+				// Use gallery set by shortcode
+				foreach ( $model->galleries as $gallery )
+				{
+					if ( $gallery->url == $gallery_url )
+					{
+						$current_gallery = $gallery;
+					}
+				}
+			}
+			else
+			{
+				// Default to first gallery available
+				$current_gallery = reset($model->galleries);
+			}
+
+			$output = $this->parse_template('model',array('model' => $model, 'current_gallery' => $current_gallery));
 		}
 		else
 		{
@@ -142,12 +175,11 @@ class Syngency_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	/*
+
 	public function enqueue_scripts() {
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
 
 	}
-	*/
 
 }

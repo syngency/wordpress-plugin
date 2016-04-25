@@ -44,6 +44,23 @@
 	font-weight: bold;
 }
 
+.syngency-model-galleries {
+	list-style: none;
+	padding: 0;
+	margin: 0 0 30px 0;
+}
+
+.syngency-model-galleries li {
+	display: inline;
+	padding-right: 5px;
+	margin-right: 10px;
+	border-right: 1px solid #ccc;
+}
+
+.syngency-model-galleries li:last-child {
+	border-right: 0;
+}
+
 .syngency-model-gallery ul {
 	list-style: none;
 	padding: 0;
@@ -63,4 +80,8 @@
 
 .syngency-model-gallery-image a img {
 	display: inline-block !important;
+}
+
+.hide {
+	display: none !important;
 }

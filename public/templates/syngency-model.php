@@ -46,14 +46,26 @@
 		<?php endif; ?>
 	</ul>
 
+	<ul class="syngency-model-galleries">
 	<?php foreach ( $model->galleries as $gallery ): ?>
+		<?php if ( $gallery->url == $current_gallery->url ): ?>
+		<li class="current">
+			<?php echo $gallery->name; ?>
+		<?php else: ?>
+		<li>
+			<a href="./?url=<?php echo $model->url; ?>/<?php echo $gallery->url; ?>"><?php echo $gallery->name; ?></a>
+		<?php endif; ?>
+		</li>
+	<?php endforeach; ?>
+	</ul>
+
 	<div class="syngency-model-gallery <?php echo $gallery->url; ?>">
-		<h3><?php echo $gallery->name; ?></h3>
+		<h3><?php echo $current_gallery->name; ?></h3>
 		<ul>
-			<?php foreach ( $gallery->files as $file ): ?>
+			<?php foreach ( $current_gallery->files as $file ): ?>
 				<?php if ( $file->is_image ): ?>
 				<li class="syngency-model-gallery-image">
-					<a href="<?php echo $file->large_url; ?>">
+					<a href="<?php echo $file->large_url; ?>" rel="<?php echo $gallery->url; ?>">
 						<img src="<?php echo $file->small_url; ?>" alt="">
 					</a>
 				</li>
@@ -70,6 +82,5 @@
 			<?php endforeach; ?>
 		</ul>
 	</div>
-	<?php endforeach; ?>
 
 </div>
