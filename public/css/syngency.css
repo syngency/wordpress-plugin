@@ -1,3 +1,40 @@
+/* Divisions template */
+
+.syngency-gender-filter {
+	list-style: none;
+	margin: 0 0 30px 0;
+	padding: 0;
+}
+
+.syngency-gender-filter li {
+	display: inline;
+	padding-right: 5px;
+	margin-right: 10px;
+	border-right: 1px solid #ccc;
+}
+
+.syngency-gender-filter li:last-child {
+	margin-right: 0;
+	border-right: 0;
+}
+
+.syngency-gender-filter a {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #999;
+	letter-spacing: 0.5px;
+	box-shadow: none !important;
+}
+
+.syngency-gender-filter a.active {
+	font-weight: bold;
+	color: #191919;
+	text-decoration: underline;
+}
+
 .syngency-division-model {
 	display: inline-block;
 	width: auto;
@@ -21,10 +58,18 @@
 	letter-spacing: 0.5px;
 }
 
+/* Model Template */
+
+.syngency-model-gallery-name {
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 15px;
+}
+
 .syngency-model-measurements {
 	list-style: none;
-	padding: 0;
-	margin: 0 0 30px 0;
+	padding: 15px 0 0 0;
+	margin: 30px 0;
+	border-top: 1px solid #ddd;
 }
 
 .syngency-model-measurements li {
@@ -45,9 +90,12 @@
 }
 
 .syngency-model-galleries {
+	position: relative;
+	top: 30px;
 	list-style: none;
 	padding: 0;
-	margin: 0 0 30px 0;
+	margin: 0;
+	float: right;
 }
 
 .syngency-model-galleries li {
@@ -59,6 +107,22 @@
 
 .syngency-model-galleries li:last-child {
 	border-right: 0;
+}
+
+.syngency-model-galleries a {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #999;
+	letter-spacing: 0.5px;
+	box-shadow: none !important;
+}
+
+.syngency-model-galleries a.active {
+	color: #191919;
+	text-decoration: underline;
 }
 
 .syngency-model-gallery ul {
