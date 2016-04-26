@@ -15,8 +15,10 @@
 
 <div class="syngency-model">
 
+	<!-- Model Name -->
 	<h2 class="syngency-model-name"><?php echo $model->display_name; ?></h2>
 
+	<!-- Gallery Links -->
 	<ul class="syngency-model-galleries">
 	<?php foreach ( $model->galleries as $gallery ): ?>
 		<li>
@@ -26,7 +28,8 @@
 	<?php endforeach; ?>
 	</ul>
 
-	<div class="syngency-model-gallery <?php echo $gallery->url; ?>">
+	<!-- Gallery Images -->
+	<div class="syngency-model-gallery">
 		<h3 class="syngency-model-gallery-name"><?php echo $current_gallery->name; ?></h3>
 		<ul>
 			<?php foreach ( $current_gallery->files as $file ): ?>
@@ -50,6 +53,7 @@
 		</ul>
 	</div>
 
+	<!-- Measurements -->
 	<ul class="syngency-model-measurements">
 		<?php foreach ( $model->measurements as $measurement ):
 			// Skip measurement if not set as visible

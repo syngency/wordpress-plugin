@@ -1,12 +1,12 @@
 <ul class="syngency-gender-filter">
 	<li>
-		<a href="#" data-gender="all" class="active">TODOS</a>
+		<a href="#" data-gender="all" class="active"><?php echo __( 'All', 'syngency' ); ?></a>
 	</li>
 	<li>
-		<a href="#" data-gender="male">HOMENS</a>
+		<a href="#" data-gender="male"><?php echo __( 'Men', 'syngency' ); ?></a>
 	</li>
 	<li>
-		<a href="#" data-gender="female">MULHERES</a>
+		<a href="#" data-gender="female"><?php echo __( 'Women', 'syngency' ); ?></a>
 	</li>
 </ul>
 
