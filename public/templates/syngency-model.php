@@ -20,26 +20,34 @@
 
 	<!-- Gallery Links -->
 	<ul class="syngency-model-galleries">
-	<?php foreach ( $model->galleries as $gallery ): ?>
+	<?php $i = 0; foreach ( $model->galleries as $gallery ): ?>
 		<li>
-			<a href="./?url=<?php echo $model->url; ?>/<?php echo $gallery->url; ?>"<?php if ( $gallery->url == $current_gallery->url ) echo ' class="active"'; ?>
+			<a href="#<?php echo $gallery->url; ?>"<?php if ( $i == 0 ) echo ' class="active"'; $i++; ?>
 ><?php echo $gallery->name; ?></a>
 		</li>
 	<?php endforeach; ?>
 	</ul>
 
-	<!-- Gallery Images -->
-	<div class="syngency-model-gallery">
-		<h3 class="syngency-model-gallery-name"><?php echo $current_gallery->name; ?></h3>
+	<?php $i = 0; foreach ( $model->galleries as $gallery ): ?>
+
+	<!-- Gallery -->
+	<div class="syngency-model-gallery<?php if ( $i > 0 ) echo ' hide'; ?>" id="<?php echo $gallery->url; ?>">
+		<h3 class="syngency-model-gallery-name"><?php echo $gallery->name; ?></h3>
 		<ul>
-			<?php foreach ( $current_gallery->files as $file ): ?>
+			<?php foreach ( $gallery->files as $file ): ?>
+
 				<?php if ( $file->is_image ): ?>
 				<li class="syngency-model-gallery-image">
-					<a href="<?php echo $file->large_url; ?>" rel="<?php echo $gallery->url; ?>">
-						<img src="<?php echo $file->small_url; ?>" alt="">
+					<?php if ( !empty($this->options['link_size']) ): ?>
+					<a href="<?php echo $file->{$this->options['link_size'] . '_url'}; ?>" rel="<?php echo $gallery->url; ?>">
+						<img src="<?php echo $file->{$this->options['image_size'] . '_url'}; ?>" alt="">
 					</a>
+					<?php else: ?>
+					<img src="<?php echo $file->{$this->options['image_size'] . '_url'}; ?>" alt="">
+					<?php endif; ?>
 				</li>
 				<?php endif; ?>
+			
 				<?php if ( $file->is_video ): ?>
 				<li class="syngency-model-gallery-video">
 					<video controls>
@@ -53,6 +61,8 @@
 		</ul>
 	</div>
 
+	<?php $i++; endforeach; ?>
+
 	<!-- Measurements -->
 	<ul class="syngency-model-measurements">
 		<?php foreach ( $model->measurements as $measurement ):
@@ -60,7 +70,7 @@
 			if ( !in_array($measurement->name, $this->options['measurements']) ) continue;	
 		?>
 		<li>
-			<span class="label"><?php echo $measurement->name; ?></span>
+			<span class="label"><?php echo __( $measurement->name, 'syngency' ); ?></span>
 			<?php if ( isset($measurement->imperial) ): ?>
 				<span class="value imperial"><?php echo $measurement->imperial; ?></span>
 				<span class="value metric"><?php echo $measurement->metric; ?></span>
@@ -71,13 +81,13 @@
 		<?php endforeach; ?>
 		<?php if ( in_array('Hair', $this->options['measurements']) ): ?>
 		<li>
-			<span class="label">Hair</span>
+			<span class="label"><?php echo __( 'Hair', 'syngency' ); ?></span>
 			<span class="value"><?php echo $model->hair_color; ?></span>
 		</li>
 		<?php endif; ?>
 		<?php if ( in_array('Eyes', $this->options['measurements']) ): ?>
 		<li>
-			<span class="label">Eyes</span>
+			<span class="label"><?php echo __( 'Eyes', 'syngency' ); ?></span>
 			<span class="value"><?php echo $model->eye_color; ?></span>
 		</li>
 		<?php endif; ?>

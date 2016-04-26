@@ -44,6 +44,7 @@ class Syngency_Admin {
      */
     private $options;
     private $measurements;
+    private $image_sizes;
 
 	public function __construct( $plugin_name, $version ) {
 
@@ -56,38 +57,39 @@ class Syngency_Admin {
 
         // Measurement options
         $this->measurements = [
-            __( 'Height', 'syngency' ),
-            __( 'Bust', 'syngency' ),
-            __( 'Waist', 'syngency' ),
-            __( 'Hip', 'syngency' ),
-            __( 'Dress', 'syngency' ),
-            __( 'Shoe', 'syngency' ),
-            __( 'Hair', 'syngency' ),
-            __( 'Eyes', 'syngency' ),
-            __( 'Chest', 'syngency' ),
-            __( 'Suit', 'syngency' ),
-            __( 'Collar', 'syngency' ),
-            __( 'Cup', 'syngency' ),
-            __( 'Inseam', 'syngency' ),
-            __( 'Sleeve', 'syngency' ),
-            __( 'Weight', 'syngency' ),
-            __( 'Outseam', 'syngency' ),
-            __( 'Apparel', 'syngency' ),
+            'Height' => __( 'Height', 'syngency' ),
+            'Bust' => __( 'Bust', 'syngency' ),
+            'Waist' => __( 'Waist', 'syngency' ),
+            'Hip' => __( 'Hip', 'syngency' ),
+            'Dress' => __( 'Dress', 'syngency' ),
+            'Shoe' => __( 'Shoe', 'syngency' ),
+            'Hair' => __( 'Hair', 'syngency' ),
+            'Eyes' => __( 'Eyes', 'syngency' ),
+            'Chest' => __( 'Chest', 'syngency' ),
+            'Suit' => __( 'Suit', 'syngency' ),
+            'Collar' => __( 'Collar', 'syngency' ),
+            'Cup' => __( 'Cup', 'syngency' ),
+            'Inseam' => __( 'Inseam', 'syngency' ),
+            'Sleeve' => __( 'Sleeve', 'syngency' ),
+            'Weight' => __( 'Weight', 'syngency' ),
+            'Outseam' => __( 'Outseam', 'syngency' ),
+            'Apparel' => __( 'Apparel', 'syngency' ),
         ];
+
         // Measurement defaults
         if ( !is_array($this->options['measurements']) )
         {
             $this->options['measurements'] = [
-                __( 'Height', 'syngency' ),
-                __( 'Bust', 'syngency' ),
-                __( 'Waist', 'syngency' ),
-                __( 'Hip', 'syngency' ),
-                __( 'Dress', 'syngency' ),
-                __( 'Shoe', 'syngency' ),
-                __( 'Hair', 'syngency' ),
-                __( 'Eyes', 'syngency' ),
+                'Height','Bust','Waist','Hip','Dress','Shoe','Hair', 'Eyes'
             ];
         }
+
+        // Image Sizes
+        $this->image_sizes = [
+            'small' => 'Small',
+            'medium' => 'Medium',
+            'large' => 'Large'
+        ];
 
 	}
 
@@ -130,24 +132,24 @@ class Syngency_Admin {
     public function page_init()
     {        
         register_setting(
-            'syngency_option_group', // Option group
-            'syngency_options', // Option name
-            array( $this, 'sanitize' ) // Sanitize
+            'syngency_option_group',
+            'syngency_options',
+            array( $this, 'sanitize' )
         );
 
         add_settings_section(
-            'api_settings', // ID
-            'API Settings', // Title
-            array( $this, 'api_settings_info' ), // Callback
-            'syngency-admin' // Page
+            'api_settings',
+            'API Settings',
+            array( $this, 'api_settings_info' ),
+            'syngency-admin'
         );  
 
         add_settings_field(
-            'domain', // ID
-            'Domain', // Title 
-            array( $this, 'domain_callback' ), // Callback
-            'syngency-admin', // Page
-            'api_settings' // Section           
+            'domain',
+            'Domain',
+            array( $this, 'domain_callback' ),
+            'syngency-admin',
+            'api_settings'      
         );      
 
         add_settings_field(
@@ -159,16 +161,32 @@ class Syngency_Admin {
         );
 
         add_settings_section(
-            'wordpress_settings', // ID
-            'WordPress Settings', // Title
-            array( $this, 'wordpress_settings_info' ), // Callback
-            'syngency-admin' // Page
+            'wordpress_settings',
+            'WordPress Settings',
+            array( $this, 'wordpress_settings_info' ),
+            'syngency-admin' 
         );
 
         add_settings_field(
             'measurements', 
             'Measurements',
             array( $this, 'measurements_callback' ),
+            'syngency-admin', 
+            'wordpress_settings'
+        );
+
+        add_settings_field(
+            'image_size', 
+            'Displayed Image Size',
+            array( $this, 'image_size_callback' ),
+            'syngency-admin', 
+            'wordpress_settings'
+        );
+
+        add_settings_field(
+            'link_size', 
+            'Linked Image Size',
+            array( $this, 'link_size_callback' ),
             'syngency-admin', 
             'wordpress_settings'
         );
@@ -247,6 +265,43 @@ class Syngency_Admin {
                 echo ' selected="selected"';
             }
             echo '>' . $measurement . '</option>';
+        }
+        echo '</select>';
+    }
+
+    /** 
+     * Get the settings option array and print one of its values
+     */
+    public function image_size_callback()
+    {
+        echo '<select name="syngency_options[image_size]">';
+        foreach ( $this->image_sizes as $value => $label )
+        {
+            echo '<option value="' . $value . '"';
+            if ( $value == $this->options['image_size'] )
+            {
+                echo ' selected="selected"';
+            }
+            echo '>' . $label . '</option>';
+        }
+        echo '</select>';
+    }
+
+    /** 
+     * Get the settings option array and print one of its values
+     */
+    public function link_size_callback()
+    {
+        echo '<select name="syngency_options[link_size]">';
+        echo '<option value="">None</option>';
+        foreach ( $this->image_sizes as $value => $label )
+        {
+            echo '<option value="' . $value . '"';
+            if ( $value == $this->options['link_size'] )
+            {
+                echo ' selected="selected"';
+            }
+            echo '>' . $label . '</option>';
         }
         echo '</select>';
     }
