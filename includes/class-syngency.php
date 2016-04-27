@@ -169,6 +169,8 @@ class Syngency {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_filter( 'pre_get_document_title', $plugin_public, 'set_page_title' );
+		$this->loader->add_filter( 'the_title', $plugin_public, 'set_page_title' );
 
 	}
 

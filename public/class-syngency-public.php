@@ -41,6 +41,15 @@ class Syngency_Public {
 	private $version;
 
 	/**
+	 * The title of the page displayed.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $page_title    String to be set as the page title.
+	 */
+	private $page_title;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -51,7 +60,8 @@ class Syngency_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->options = get_option( 'syngency_options' );
+		$this->options = get_option('syngency_options');
+		$this->page_title = ucwords(str_replace('-',' ',$_GET['url']));
 
 		add_shortcode('syngency-division', array($this, 'get_division'));
 		add_shortcode('syngency-model', array($this, 'get_model'));
@@ -115,6 +125,7 @@ class Syngency_Public {
 		{
 			$body = wp_remote_retrieve_body($response);	
 			$model = json_decode($body);
+			$this->page_title = $model->display_name;
 			$output = $this->parse_template('model',array('model' => $model));
 		}
 		else
@@ -146,6 +157,14 @@ class Syngency_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	public function set_page_title($title) {
+		if ( !empty($this->page_title) )
+		{
+			return $this->page_title;
+		}
+		return $title;
 	}
 
 }

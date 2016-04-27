@@ -29,7 +29,7 @@ if ( ! defined( 'WPINC' ) ) {
  * The code that runs during plugin activation.
  */
 function activate_syngency() {
-	delete_option('syngency_option_name'); // Deprecated
+
 }
 
 /**

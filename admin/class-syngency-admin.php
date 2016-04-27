@@ -177,7 +177,7 @@ class Syngency_Admin {
 
         add_settings_field(
             'image_size', 
-            'Displayed Image Size',
+            'Gallery Image Size',
             array( $this, 'image_size_callback' ),
             'syngency-admin', 
             'wordpress_settings'
@@ -185,7 +185,7 @@ class Syngency_Admin {
 
         add_settings_field(
             'link_size', 
-            'Linked Image Size',
+            'Gallery Images Link To',
             array( $this, 'link_size_callback' ),
             'syngency-admin', 
             'wordpress_settings'
