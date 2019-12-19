@@ -67,6 +67,21 @@ class Syngency_Public {
 	public function get_division( $atts ) {
 
 		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['url'] . '.json';
+		$request_params = [];
+
+		// Gender
+		if ( isset($atts['gender']) ) {
+			$request_params['gender'] = $atts['gender']; 
+		}
+		// Office
+		if ( isset($atts['office_id']) ) {
+			$request_params['office_id'] = $atts['office-id'];
+		}
+		// Add params
+		if ( count($params) ) {
+			$request_url .= '?' . http_build_query($request_params);
+		}
+		
 		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
@@ -88,19 +103,15 @@ class Syngency_Public {
 
 	public function get_model( $atts ) {
 
-		if ( isset($atts['url']) )
-		{
+		if (isset($atts['url'])) {
 			// Use ID set by shortcode
 			$model_url = $atts['url'];
-		}
-		else
-		{
+		} else {
 			// Use ID set by query string var
 			$model_url = $_GET['url'];
 		}
 
-		if ( !isset($model_url) )
-		{
+		if (!isset($model_url)) {
 			return false;
 		}
 
