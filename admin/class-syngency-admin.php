@@ -238,7 +238,7 @@ class Syngency_Admin {
     public function domain_callback()
     {
         printf(
-            '<input type="text" id="domain" name="syngency_options[domain]" value="%s" />',
+            '<input type="text" id="domain" class="regular-text" name="syngency_options[domain]" value="%s" />',
             isset( $this->options['domain'] ) ? esc_attr( $this->options['domain']) : ''
         );
     }
@@ -249,7 +249,7 @@ class Syngency_Admin {
     public function api_key_callback()
     {
         printf(
-            '<input type="text" id="api_key" name="syngency_options[api_key]" value="%s" />',
+            '<input type="text" id="api_key" class="regular-text" name="syngency_options[api_key]" value="%s" />',
             isset( $this->options['api_key'] ) ? esc_attr( $this->options['api_key']) : ''
         );
     }
