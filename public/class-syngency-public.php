@@ -52,10 +52,9 @@ class Syngency_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->options = get_option('syngency_options');
+		$this->page = [];
 
-		add_shortcode('syngency-division', array($this, 'get_division'));
-		add_shortcode('syngency-model', array($this, 'get_model'));
-
+		add_shortcode('syngency', array($this, 'router'));
 	}
 
 	public function parse_template($template,$data)
@@ -64,9 +63,27 @@ class Syngency_Public {
 		include(__DIR__  . '/templates/syngency-' . $template . '.php');
 	}
 
-	public function get_division( $atts ) {
+	public function router( $atts ) {
 
-		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['url'] . '.json';
+		// Surely WordPress provides a more elegant way of checking this
+		$url = explode('/',rtrim($_SERVER['REQUEST_URI'],'/'));
+		$last_segment = end($url);
+		$real_permalink = explode('/',rtrim(get_permalink(),'/'));
+		$real_last_segment = end($real_permalink);
+		if ( $last_segment !== $real_last_segment ) {
+			// Model Portfolio
+			$atts['model'] = $last_segment;
+			$this->get_model($atts);
+		} else {
+			// Division
+			$this->get_division($atts);
+		}
+
+	}
+
+	public function get_division($atts) {
+
+		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division'] . '.json';
 		$request_params = [];
 
 		// Gender
@@ -78,7 +95,7 @@ class Syngency_Public {
 			$request_params['office_id'] = $atts['office-id'];
 		}
 		// Add params
-		if ( count($params) ) {
+		if ( count($request_params) ) {
 			$request_url .= '?' . http_build_query($request_params);
 		}
 		
@@ -88,14 +105,19 @@ class Syngency_Public {
 		  )
 		);
 		$response = wp_remote_request( $request_url, $request_args );
-		if ( wp_remote_retrieve_response_code($response) == 200 )
-		{
+
+		if ( wp_remote_retrieve_response_code($response) == 200 ) {
 			$body = wp_remote_retrieve_body($response);
 			$models = json_decode($body);
+			
+			// Register endpoints
+			foreach ( $models as $model ) {
+				$endpoint = basename($model->url);
+				add_rewrite_endpoint( $endpoint, EP_PAGES, 'ryan' );
+			}
+			flush_rewrite_rules();
 			$output = $this->parse_template('division',array('models' => $models));
-		}
-		else
-		{
+		} else {
 			$output = false;
 		}
 		return $output;
@@ -103,19 +125,11 @@ class Syngency_Public {
 
 	public function get_model( $atts ) {
 
-		if (isset($atts['url'])) {
-			// Use ID set by shortcode
-			$model_url = $atts['url'];
-		} else {
-			// Use ID set by query string var
-			$model_url = $_GET['url'];
-		}
-
-		if (!isset($model_url)) {
+		if (!isset($atts['model'])) {
 			return false;
 		}
 
-		$request_url = 'http://' . $this->options['domain'] . '/portfolios/' . $model_url . '.json';
+		$request_url = 'http://' . $this->options['domain'] . '/portfolios/' . $atts['model'] . '.json';
 		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
