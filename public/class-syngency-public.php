@@ -83,17 +83,21 @@ class Syngency_Public {
 
 	public function get_division($atts) {
 
-		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division'] . '.json';
+		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division'];
 		$request_params = [];
 
 		// Gender
 		if ( isset($atts['gender']) ) {
-			$request_params['gender'] = $atts['gender']; 
+			$request_url .= '/' . $atts['gender']; 
 		}
+
+		$request_url .= '.json';
+
 		// Office
 		if ( isset($atts['office_id']) ) {
 			$request_params['office_id'] = $atts['office-id'];
 		}
+
 		// Add params
 		if ( count($request_params) ) {
 			$request_url .= '?' . http_build_query($request_params);
