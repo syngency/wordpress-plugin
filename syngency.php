@@ -11,7 +11,7 @@
  * Plugin Name:       Syngency
  * Plugin URI:        http://syngency.com/add-ons/wordpress/
  * Description:       Displays your Syngency divisions, models, and galleries on your WordPress site
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Syngency
  * Author URI:        http://syngency.com/
  * License:           GPL-2.0+

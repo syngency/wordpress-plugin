@@ -43,9 +43,9 @@ class Syngency_Public {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    1.0.0
+	 * @since      1.0.0
 	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string    $version           The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
@@ -140,14 +140,11 @@ class Syngency_Public {
 		  )
 		);
 		$response = wp_remote_request( $request_url, $request_args );
-		if ( wp_remote_retrieve_response_code($response) == 200 )
-		{
+		if ( wp_remote_retrieve_response_code($response) == 200 ) {
 			$body = wp_remote_retrieve_body($response);	
 			$model = json_decode($body);
 			$output = $this->parse_template('model',array('model' => $model));
-		}
-		else
-		{
+		} else {
 			$output = false;
 		}
 		return $output;

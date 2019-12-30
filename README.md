@@ -25,23 +25,13 @@ Select which image size (Small/Medium/Large) will be linked to from gallery imag
 
 ### Usage ###
 
-#### Divisions ####
-
 [Create a page](https://wordpress.org/support/article/pages/#creating-pages) for your first Syngency division, and place the following shortcode, along with a reference to the URL of the Syngency division you wish to display on that page:
 
-`[syngency-division url="fashion-models"]`
+`[syngency url="fashion-models"]`
 
-Additionally, `office_id` and `gender` can be added to filter the division results:
+Additionally, `office_id` and `gender` can be added to filter the division results like this:
 
 `[syngency-division url="fashion-models" office-id="138" gender="female"]`
-
-#### Model Portfolios ####
-
-[Create a subpage](https://wordpress.org/support/article/pages/#to-create-a-subpage) under the division page you created above, and place the following shortcode on that page:
-
-`[syngency-model]`
-
-No additional parameters are required.
 
 #### Customising the templates ####
 
