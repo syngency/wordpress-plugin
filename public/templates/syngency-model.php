@@ -79,18 +79,22 @@
 			<?php endif; ?>
 		</li>
 		<?php endforeach; ?>
-		<?php if ( in_array('Hair', $this->options['measurements']) ): ?>
-		<li>
-			<span class="label"><?php echo __( 'Hair', 'syngency' ); ?></span>
-			<span class="value"><?php echo $model->hair_color; ?></span>
-		</li>
-		<?php endif; ?>
-		<?php if ( in_array('Eyes', $this->options['measurements']) ): ?>
-		<li>
-			<span class="label"><?php echo __( 'Eyes', 'syngency' ); ?></span>
-			<span class="value"><?php echo $model->eye_color; ?></span>
-		</li>
-		<?php endif; ?>
+		<?php if ( in_array('Hair', $this->options['measurements']) && !empty($model->hair_color) ): ?>
+        <li>
+            <span class="label"><?php echo __( 'Hair', 'syngency' ); ?></span>
+            </li>
+            <li>
+            <span class="value"><?php echo $model->hair_color; ?></span>
+        </li>
+        <?php endif; ?>
+        <?php if ( in_array('Eyes', $this->options['measurements']) && !empty($model->hair_color) ): ?>
+        <li>
+            <span class="label"><?php echo __( 'Eyes', 'syngency' ); ?></span>
+            </li>
+            <li>
+            <span class="value"><?php echo $model->eye_color; ?></span>
+        </li>
+        <?php endif; ?>
 	</ul>
 
 </div>
