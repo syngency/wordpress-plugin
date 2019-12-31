@@ -52,7 +52,6 @@ class Syngency_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->options = get_option('syngency_options');
-		$this->page = [];
 
 		add_shortcode('syngency', array($this, 'router'));
 	}
@@ -70,6 +69,9 @@ class Syngency_Public {
 		$last_segment = end($url);
 		$real_permalink = explode('/',rtrim(get_permalink(),'/'));
 		$real_last_segment = end($real_permalink);
+
+        // Render HTML output
+        ob_start();
 		if ( $last_segment !== $real_last_segment ) {
 			// Model Portfolio
 			$atts['model'] = $last_segment;
@@ -78,6 +80,7 @@ class Syngency_Public {
 			// Division
 			$this->get_division($atts);
 		}
+        return ob_get_clean();
 
 	}
 
@@ -122,9 +125,9 @@ class Syngency_Public {
 			flush_rewrite_rules();
 			$output = $this->parse_template('division',array('models' => $models));
 		} else {
-			$output = false;
+			$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
 		}
-		return $output;
+		echo $output;
 	}
 
 	public function get_model( $atts ) {
@@ -145,9 +148,9 @@ class Syngency_Public {
 			$model = json_decode($body);
 			$output = $this->parse_template('model',array('model' => $model));
 		} else {
-			$output = false;
+			$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
 		}
-		return $output;
+		echo $output;
 	
 	}
 
