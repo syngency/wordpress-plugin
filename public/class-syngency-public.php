@@ -136,7 +136,12 @@ class Syngency_Public {
 			return false;
 		}
 
-		$request_url = 'http://' . $this->options['domain'] . '/portfolios/' . $atts['model'] . '.json';
+		// Remove gender from division attribute if present
+		if ( strpos($atts['division'],'/') ) {
+			$atts['division'] = explode('/',$atts['division'])[0];
+		}
+
+		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division']. '/portfolios/' . $atts['model'] . '.json';
 		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
