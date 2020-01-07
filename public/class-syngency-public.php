@@ -94,6 +94,10 @@ class Syngency_Public {
 
 	public function get_division($atts) {
 
+		if (!isset($atts['division'])) {
+			return false;
+		}
+
 		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division'];
 		$request_params = [];
 
@@ -120,21 +124,27 @@ class Syngency_Public {
 		  )
 		);
 		$response = wp_remote_request( $request_url, $request_args );
-
-		if ( wp_remote_retrieve_response_code($response) == 200 ) {
-			$body = wp_remote_retrieve_body($response);
-			$models = json_decode($body);
-			
-			// Register endpoints
-			foreach ( $models as $model ) {
-				$endpoint = basename($model->url);
-				$model->url = get_permalink() . basename($model->url);
-				add_rewrite_endpoint( $endpoint, EP_PAGES );
-			}
-			flush_rewrite_rules();
-			$output = $this->render_template('division',array('options' => $this->options, 'models' => $models));
-		} else {
-			$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
+		switch ( wp_remote_retrieve_response_code($response) ) {
+			case 200:
+				$body = wp_remote_retrieve_body($response);
+				$models = json_decode($body);
+				
+				// Register endpoints
+				foreach ( $models as $model ) {
+					$endpoint = basename($model->url);
+					$model->url = get_permalink() . basename($model->url);
+					add_rewrite_endpoint( $endpoint, EP_PAGES );
+				}
+				flush_rewrite_rules();
+				$output = $this->render_template('division',array('options' => $this->options, 'models' => $models));
+			break;
+			case 401:
+			case 403:
+				$output = '<pre>Invalid API Key</pre>';
+			break;
+			case 404:
+				$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
+			break;
 		}
 		echo $output;
 	}
@@ -157,26 +167,30 @@ class Syngency_Public {
 		  )
 		);
 		$response = wp_remote_request( $request_url, $request_args );
-		if ( wp_remote_retrieve_response_code($response) == 200 ) {
-			$body = wp_remote_retrieve_body($response);	
-			$model = json_decode($body);
-
-			// Set link url for galleries
-			if ( isset($model->galleries) ) {
-				foreach ( $model->galleries as $gallery ) {
-					foreach ( $gallery->files as $file ) {
-						$file->image_url = $file->{$this->options['image_size'] . '_url'};
-						$file->link_url = $file->{$this->options['link_size'] . '_url'};
+		switch ( wp_remote_retrieve_response_code($response) ) {
+			case 200:
+				$body = wp_remote_retrieve_body($response);	
+				$model = json_decode($body);
+				// Set link url for galleries
+				if ( isset($model->galleries) ) {
+					foreach ( $model->galleries as $gallery ) {
+						foreach ( $gallery->files as $file ) {
+							$file->image_url = $file->{$this->options['image_size'] . '_url'};
+							$file->link_url = $file->{$this->options['link_size'] . '_url'};
+						}
 					}
 				}
-			}
-
-			$output = $this->render_template('model',array('options' => $this->options, 'model' => $model));
-		} else {
-			$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
+				$output = $this->render_template('model',array('options' => $this->options, 'model' => $model));
+			break;
+			case 401:
+			case 403:
+				$output = '<pre>Invalid API Key</pre>';
+			break;
+			case 404:
+				$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
+			break;
 		}
 		echo $output;
-	
 	}
 
 	/**
