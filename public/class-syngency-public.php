@@ -58,11 +58,18 @@ class Syngency_Public {
 		add_shortcode('syngency', array($this, 'router'));
 	}
 
-	public function render_template($template,$data)
+	/**
+	 * Render Liquid template
+	 *
+	 * @since      1.1.0
+	 * @param      array     $name       Template name
+	 * @param      array     $data       Template data
+	 */
+	public function render_template($name,$data)
 	{
 		$liquid = new Template();
 		try {
-			$liquid->parse($this->options[$template . '_template']);
+			$liquid->parse($this->options[$name . '_template']);
 			$html = $liquid->render($data);
 		} catch ( Exception $e ) {
 			$html = "<pre><strong>Syngency Template Error:</strong> " . $e->getMessage() . "</pre>";
@@ -70,6 +77,12 @@ class Syngency_Public {
 		return $html;
 	}
 
+	/**
+	 * Route to the respective method based on URL
+	 *
+	 * @since      1.1.0
+	 * @param      array     $atts       Attributes passed by the shortcode
+	 */
 	public function router( $atts ) {
 
 		// Surely WordPress provides a more elegant way of checking this
@@ -92,6 +105,12 @@ class Syngency_Public {
 
 	}
 
+	/**
+	 * Get division based on attributes passed by shortcode
+	 *
+	 * @since      1.0.0
+	 * @param      array     $atts       Attributes passed by the shortcode
+	 */
 	public function get_division($atts) {
 
 		if (!isset($atts['division'])) {
@@ -121,34 +140,45 @@ class Syngency_Public {
 		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
-		  )
+		  ),
+		  'timeout' => 30
 		);
-		$response = wp_remote_request( $request_url, $request_args );
-		switch ( wp_remote_retrieve_response_code($response) ) {
-			case 200:
-				$body = wp_remote_retrieve_body($response);
-				$models = json_decode($body);
-				
-				// Register endpoints
-				foreach ( $models as $model ) {
-					$endpoint = basename($model->url);
-					$model->url = get_permalink() . basename($model->url);
-					add_rewrite_endpoint( $endpoint, EP_PAGES );
-				}
-				flush_rewrite_rules();
-				$output = $this->render_template('division',array('options' => $this->options, 'models' => $models));
-			break;
-			case 401:
-			case 403:
-				$output = '<pre>Invalid API Key</pre>';
-			break;
-			case 404:
-				$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
-			break;
+		$response = wp_remote_get( $request_url, $request_args );
+		if ( is_wp_error( $response ) ) {
+			$output = '<pre>Wordpress Error: ' . $response->get_error_message() . '</pre>';
+		} else {
+			switch ( wp_remote_retrieve_response_code($response) ) {
+				case 200:
+					$body = wp_remote_retrieve_body($response);
+					$models = json_decode($body);
+					
+					// Register endpoints
+					foreach ( $models as $model ) {
+						$endpoint = basename($model->url);
+						$model->url = get_permalink() . basename($model->url);
+						add_rewrite_endpoint( $endpoint, EP_PAGES );
+					}
+					flush_rewrite_rules();
+					$output = $this->render_template('division',array('options' => $this->options, 'models' => $models));
+				break;
+				case 401:
+				case 403:
+					$output = '<pre>Invalid API Key</pre>';
+				break;
+				case 404:
+					$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
+				break;
+			}
 		}
 		echo $output;
 	}
 
+	/**
+	 * Get model portfolio based on attributes passed by shortcode
+	 *
+	 * @since      1.0.0
+	 * @param      array     $atts       Attributes passed by the shortcode
+	 */
 	public function get_model( $atts ) {
 
 		if (!isset($atts['model'])) {
@@ -164,56 +194,38 @@ class Syngency_Public {
 		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
-		  )
+		  ),
+		  'timeout' => 30
 		);
-		$response = wp_remote_request( $request_url, $request_args );
-		switch ( wp_remote_retrieve_response_code($response) ) {
-			case 200:
-				$body = wp_remote_retrieve_body($response);	
-				$model = json_decode($body);
-				// Set link url for galleries
-				if ( isset($model->galleries) ) {
-					foreach ( $model->galleries as $gallery ) {
-						foreach ( $gallery->files as $file ) {
-							$file->image_url = $file->{$this->options['image_size'] . '_url'};
-							$file->link_url = $file->{$this->options['link_size'] . '_url'};
+		$response = wp_remote_get( $request_url, $request_args );
+		if ( is_wp_error( $response ) ) {
+			$output = '<pre>Wordpress Error: ' . $response->get_error_message() . '</pre>';
+		} else {
+			switch ( wp_remote_retrieve_response_code($response) ) {
+				case 200:
+					$body = wp_remote_retrieve_body($response);	
+					$model = json_decode($body);
+					// Set link url for galleries
+					if ( isset($model->galleries) ) {
+						foreach ( $model->galleries as $gallery ) {
+							foreach ( $gallery->files as $file ) {
+								$file->image_url = $file->{$this->options['image_size'] . '_url'};
+								$file->link_url = $file->{$this->options['link_size'] . '_url'};
+							}
 						}
 					}
-				}
-				$output = $this->render_template('model',array('options' => $this->options, 'model' => $model));
-			break;
-			case 401:
-			case 403:
-				$output = '<pre>Invalid API Key</pre>';
-			break;
-			case 404:
-				$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
-			break;
+					$output = $this->render_template('model',array('options' => $this->options, 'model' => $model));
+				break;
+				case 401:
+				case 403:
+					$output = '<pre>Invalid API Key</pre>';
+				break;
+				case 404:
+					$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
+				break;
+			}
 		}
 		echo $output;
 	}
-
-	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syngency.css', array(), $this->version, 'all' );
-
-	}
-
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-
-	public function enqueue_scripts() {
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
-
-	}
-
+	
 }
