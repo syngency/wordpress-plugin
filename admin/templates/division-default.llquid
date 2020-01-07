@@ -10,6 +10,15 @@
 	</li>
 </ul>
 
+<ul class="syngency-index-filter">
+	{% assign letters = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z' | split: ',' %}
+    {% for letter in letters %}
+    <li>
+        <a href="#{{ letter }}">{{ letter }}</a>
+    </li>
+    {% endfor %}
+</ul>
+
 <div class="syngency-division">
 
 	{% for model in models %}
