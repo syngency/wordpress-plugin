@@ -1,5 +1,7 @@
 <?php
 
+use Liquid\Template;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -56,10 +58,16 @@ class Syngency_Public {
 		add_shortcode('syngency', array($this, 'router'));
 	}
 
-	public function parse_template($template,$data)
+	public function render_template($template,$data)
 	{
-		extract($data);
-		include(__DIR__  . '/templates/syngency-' . $template . '.php');
+		$liquid = new Template();
+		try {
+			$liquid->parse($this->options[$template . '_template']);
+			$html = $liquid->render($data);
+		} catch ( Exception $e ) {
+			$html = "<pre><strong>Syngency Template Error:</strong> " . $e->getMessage() . "</pre>";
+		}
+		return $html;
 	}
 
 	public function router( $atts ) {
@@ -120,10 +128,11 @@ class Syngency_Public {
 			// Register endpoints
 			foreach ( $models as $model ) {
 				$endpoint = basename($model->url);
-				add_rewrite_endpoint( $endpoint, EP_PAGES, 'ryan' );
+				$model->url = get_permalink() . basename($model->url);
+				add_rewrite_endpoint( $endpoint, EP_PAGES );
 			}
 			flush_rewrite_rules();
-			$output = $this->parse_template('division',array('models' => $models));
+			$output = $this->render_template('division',array('options' => $this->options, 'models' => $models));
 		} else {
 			$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
 		}
@@ -151,7 +160,18 @@ class Syngency_Public {
 		if ( wp_remote_retrieve_response_code($response) == 200 ) {
 			$body = wp_remote_retrieve_body($response);	
 			$model = json_decode($body);
-			$output = $this->parse_template('model',array('model' => $model));
+
+			// Set link url for galleries
+			if ( isset($model->galleries) ) {
+				foreach ( $model->galleries as $gallery ) {
+					foreach ( $gallery->files as $file ) {
+						$file->image_url = $file->{$this->options['image_size'] . '_url'};
+						$file->link_url = $file->{$this->options['link_size'] . '_url'};
+					}
+				}
+			}
+
+			$output = $this->render_template('model',array('options' => $this->options, 'model' => $model));
 		} else {
 			$output = '<pre>Invalid Syngency URL: ' . $request_url . '</pre>';
 		}

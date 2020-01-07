@@ -76,14 +76,6 @@ class Syngency_Admin {
             'Apparel' => __( 'Apparel', 'syngency' ),
         ];
 
-        // Measurement defaults
-        if ( !is_array($this->options['measurements']) )
-        {
-            $this->options['measurements'] = [
-                'Height','Bust','Waist','Hip','Dress','Shoe','Hair', 'Eyes'
-            ];
-        }
-
         // Image Sizes
         $this->image_sizes = [
             'small' => 'Small',
@@ -91,7 +83,19 @@ class Syngency_Admin {
             'large' => 'Large'
         ];
 
-	}
+        // Template defaults
+        $templates = ['division','model'];
+        foreach ( $templates as $template ) {
+            if ( !isset($this->option[$template . 'template']) || empty($this->option[$template . '_template']) ) {
+                $template_path = plugin_dir_url( __FILE__ ) . 'templates/' . $template . '-default.liquid';
+                if ( file_exists($template_path) ) {
+                    $template_data = fopen($template_path, "r") or die("Unable to read default tempalte file: " . $template_path);
+                    $this->option[$template . '_template'] = fread($template_data,filesize($template_path));
+                    fclose($template_data);
+                }
+            }
+        }
+    }
 
 	/**
      * Add options page
@@ -130,7 +134,9 @@ class Syngency_Admin {
      * Register and add settings
      */
     public function page_init()
-    {        
+    {       
+        // API SETTINGS
+        
         register_setting(
             'syngency_option_group',
             'syngency_options',
@@ -159,6 +165,8 @@ class Syngency_Admin {
             'syngency-admin', 
             'api_settings'
         );
+
+        // WORDPRESS SETTINGS
 
         add_settings_section(
             'wordpress_settings',
@@ -190,6 +198,31 @@ class Syngency_Admin {
             'syngency-admin', 
             'wordpress_settings'
         );
+
+        // TEMPLATES
+
+        add_settings_section(
+            'wordpress_templates',
+            'Templates',
+            array( $this, 'templates_info' ),
+            'syngency-admin'
+        );
+
+        add_settings_field(
+            'division_template', 
+            'Divisions',
+            array( $this, 'division_template_callback' ),
+            'syngency-admin', 
+            'wordpress_templates'
+        );
+
+        add_settings_field(
+            'model_template', 
+            'Models',
+            array( $this, 'model_template_callback' ),
+            'syngency-admin', 
+            'wordpress_templates'
+        );
         
     }
 
@@ -201,7 +234,7 @@ class Syngency_Admin {
     public function sanitize( $input )
     {
         $new_input = array();
-        if ( is_string($value) )
+        if ( is_string($input) )
         {
             foreach ( $input as $key => $value )
             {
@@ -216,20 +249,11 @@ class Syngency_Admin {
     }
 
     /** 
-     * Print the Section text
+     * Print the API Settings text
      */
     public function api_settings_info()
     {
         echo '<p>Enter the following information from your Syngency Settings below.</p>';
-        echo '<p>Under <strong>Settings > API</strong> in Syngency, set <em>IP Address</em> to <strong>' . $_SERVER['SERVER_ADDR'] . '</strong></p>';
-    }
-
-    /** 
-     * Print the Section text
-     */
-    public function wordpress_settings_info()
-    {
-        echo '<p>Choose how Syngency content is displayed on your WordPress site.</p>';
     }
 
     /** 
@@ -254,13 +278,21 @@ class Syngency_Admin {
         );
     }
 
+    /** 
+     * Print the WordPress Settings text
+     */
+    public function wordpress_settings_info()
+    {
+        echo '<p>Choose how Syngency content is displayed on your WordPress site.</p>';
+    }
+
     public function measurements_callback()
     {
         echo '<select name="syngency_options[measurements][]" multiple="multiple" style="width:200px;height:250px">';
         foreach ( $this->measurements as $measurement )
         {
             echo '<option';
-            if ( in_array($measurement, $this->options['measurements']) )
+            if ( isset($this->options['measurements']) && in_array($measurement, $this->options['measurements']) )
             {
                 echo ' selected="selected"';
             }
@@ -278,7 +310,7 @@ class Syngency_Admin {
         foreach ( $this->image_sizes as $value => $label )
         {
             echo '<option value="' . $value . '"';
-            if ( $value == $this->options['image_size'] )
+            if ( isset($this->options['link_size']) && $value == $this->options['image_size'] )
             {
                 echo ' selected="selected"';
             }
@@ -297,7 +329,7 @@ class Syngency_Admin {
         foreach ( $this->image_sizes as $value => $label )
         {
             echo '<option value="' . $value . '"';
-            if ( $value == $this->options['link_size'] )
+            if ( isset($this->options['link_size']) && $value == $this->options['link_size'] )
             {
                 echo ' selected="selected"';
             }
@@ -306,13 +338,33 @@ class Syngency_Admin {
         echo '</select>';
     }
 
+    /** 
+     * Print the Templates text
+     */
+    public function templates_info()
+    {
+        echo '<p>These templates dictate how the Division and Models pages are displayed on your site.</p>';
+    }
+
+    public function division_template_callback()
+    {
+        $val = isset( $this->options['division_template'] ) ? $this->options['division_template'] : '';
+        echo '<textarea name="syngency_options[division_template]" id="syngency-division-template">' . esc_textarea($val) . '</textarea>';
+    }
+
+    public function model_template_callback()
+    {
+        $val = isset( $this->options['model_template'] ) ? $this->options['model_template'] : '';
+        echo '<textarea name="syngency_options[model_template]" id="syngency-model-template">' . esc_textarea($val) . '</textarea>';
+    }
+
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
+        wp_enqueue_style('wp-codemirror');
 		//wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syngency.css', array(), $this->version, 'all' );
 
 	}
@@ -323,9 +375,10 @@ class Syngency_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
-
+        $cm_settings['codeEditor'] = wp_enqueue_code_editor(array('type' => 'text/html'));
+        wp_localize_script('jquery', 'cm_settings', $cm_settings);
+        wp_enqueue_script('wp-theme-plugin-editor');
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
 	}
 
 }

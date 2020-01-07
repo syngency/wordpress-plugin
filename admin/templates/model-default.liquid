@@ -1,0 +1,165 @@
+<div class="syngency-model">
+
+	<!-- Model Name -->
+	<h2 class="syngency-model-name">{{ model.display_name }}</h2>
+
+	<!-- Gallery Links -->
+	<ul class="syngency-model-galleries">
+	{% for gallery in model.galleries %}
+		<li>
+			<a href="#{{ gallery.url }}"{% if forloop.first %} class="active"{% endif %}>
+				{{ gallery.name }}
+			</a>
+		</li>
+	{% endfor %}
+	</ul>
+
+	{% for gallery in model.galleries %}
+
+	<!-- Gallery -->
+	<div class="syngency-model-gallery" id="{{ gallery.url }}"{% if forloop.first == false %} style="display:none"{% endif %}>
+		<h3 class="syngency-model-gallery-name">{{ gallery.name }}</h3>
+		<ul>
+			{% for file in gallery.files %}
+
+				{% if file.is_image %}
+				<li class="syngency-model-gallery-image">
+					{% if options.link_size %}
+					<a href="{{ file.link_url }}" rel="{{ gallery.url }}">
+						<img src="{{ file.image_url }}" alt="">
+					</a>
+					{% else %}
+						<img src="{{ file.image_url }}" alt="">
+					{% endif %}
+				</li>
+				{% endif %}
+			
+			{% endfor %}
+			
+		</ul>
+	</div>
+
+	{% endfor %}
+
+	<!-- Measurements -->
+	<ul class="syngency-model-measurements">
+		{% for measurement in model.measurements %}
+			{% unless options.measurements contains measurement.name %}
+		<li>
+			<span class="label">{{ measurement.name }}</span>
+			{% if measurement.imperial %}
+				<span class="value imperial">{{ measurement.imperial }}</span>
+				<span class="value metric">{{ measurement.metric }}</span>
+			{% else %}
+				<span class="value size">{{ measurement.size }}</span>
+			{% endif %}
+		</li>
+			{% endunless %}
+		{% endfor %}
+		{% if options.measurements contains 'Hair' and model.hair_color %}
+        <li>
+            <span class="label">Hair</span>
+            </li>
+            <li>
+            <span class="value">{{ model.hair_color }}</span>
+        </li>
+        {% endif %}
+        {% if options.measurements contains 'Eyes' and model.eye_color %}
+        <li>
+            <span class="label">Eyes</span>
+            </li>
+            <li>
+            <span class="value">{{ model.eye_color }}</span>
+        </li>
+        {% endif %}
+	</ul>
+
+</div>
+
+<style>
+
+.syngency-model-gallery-name {
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 15px;
+}
+
+.syngency-model-measurements {
+	list-style: none;
+	padding: 15px 0 0 0;
+	margin: 30px 0;
+	border-top: 1px solid #ddd;
+}
+
+.syngency-model-measurements li {
+	display: inline;
+	margin-right: 15px;
+}
+
+.syngency-model-measurements li:last-child {
+	margin-right: 0;
+}
+
+.syngency-model-measurements .label {
+	color: #acacac;
+}
+
+.syngency-model-measurements .value {
+	font-weight: bold;
+}
+
+.syngency-model-galleries {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	float: right;
+}
+
+.syngency-model-galleries li {
+	display: inline;
+	padding-right: 5px;
+	margin-right: 10px;
+	border-right: 1px solid #ccc;
+}
+
+.syngency-model-galleries li:last-child {
+	border-right: 0;
+}
+
+.syngency-model-galleries a {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #999;
+	letter-spacing: 0.5px;
+	box-shadow: none !important;
+}
+
+.syngency-model-galleries a.active {
+	color: #191919;
+	text-decoration: underline;
+}
+
+.syngency-model-gallery ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.syngency-model-gallery li {
+	display: inline-block;
+	margin: 0 15px 15px 0;
+	padding: 5px;
+	border: 1px solid #eee;
+	box-shadow: none !important;
+}
+
+.syngency-model-gallery-image a img {
+	display: inline-block !important;
+}
+
+.hide {
+	display: none !important;
+}
+</style>

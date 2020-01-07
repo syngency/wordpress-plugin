@@ -119,6 +119,8 @@ class Syngency {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-syngency-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/autoload.php';
+
 		$this->loader = new Syngency_Loader();
 
 	}
