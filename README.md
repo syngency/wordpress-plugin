@@ -23,6 +23,10 @@ Select which image size (Small/Medium/Large) will be used to display gallery ima
 #### Gallery Images Link To ####
 Select which image size (Small/Medium/Large) will be linked to from gallery images.
 
+#### Templates ####
+
+The **Division** and **Model** templates use a combination of HTML, CSS, [Liquid](https://www.shopify.com/partners/shopify-cheat-sheet), and Javascript (optional) to control the look and functionality of the pages rendered by the plugin. Any changes made to these templates will be reflected on your site.
+
 ### Usage ###
 
 [Create a page](https://wordpress.org/support/article/pages/#creating-pages) for your first Syngency division, and place the following shortcode, along with a reference to the URL of the Syngency division you wish to display on that page:
@@ -31,11 +35,4 @@ Select which image size (Small/Medium/Large) will be linked to from gallery imag
 
 Additionally, `office_id` and `gender` can be added to filter the division results like this:
 
-`[syngency-division url="fashion-models" office-id="138" gender="female"]`
-
-#### Customising the templates ####
-
-To customise how the pages are presented using the shortcodes above, you can either:
-
-- Override the `.syngency-*` classes in your theme's master stylesheet to show/hide pre-defined elements, like the alphabetical or gender filters.
-- Edit the pre-defined templates in `/public/templates/` to make major layout changes.
+`[syngency url="fashion-models" office-id="138" gender="female"]`
