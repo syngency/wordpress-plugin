@@ -3,13 +3,13 @@
 /**
  * Syngency WordPress plugin - bootstrap file
  *
- * @link              http://syngency.com/add-ons/wordpress
+ * @link              https://github.com/syngency/wordpress-plugin
  * @since             1.0.0
  * @package           Syngency
  *
  * @syngency-wordpress-plugin
  * Plugin Name:       Syngency
- * Plugin URI:        http://syngency.com/add-ons/wordpress/
+ * Plugin URI:        https://github.com/syngency/wordpress-plugin
  * Description:       Displays your Syngency divisions, models, and galleries on your WordPress site
  * Version:           1.2.0
  * Author:            Syngency

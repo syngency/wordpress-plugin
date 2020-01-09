@@ -31,8 +31,8 @@ The **Division** and **Model** templates use a combination of HTML, CSS, [Liquid
 
 [Create a page](https://wordpress.org/support/article/pages/#creating-pages) for your first Syngency division, and place the following shortcode, along with a reference to the URL of the Syngency division you wish to display on that page:
 
-`[syngency url="fashion-models"]`
+`[syngency division="fashion-models"]`
 
-Additionally, `office_id` and `gender` can be added to filter the division results like this:
+Additionally, `office_id` and gender (men/women/boys/girls/non-binary) can be added to filter the division results:
 
-`[syngency url="fashion-models" office-id="138" gender="female"]`
+`[syngency division="fashion-models/women" office-id="138"]`

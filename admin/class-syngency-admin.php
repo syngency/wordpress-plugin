@@ -3,8 +3,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * Defines the plugin name, version, and enqueue hooks for 
- * the admin-specific stylesheet and JavaScript.
+ * Defines the plugin name, version, and admin hooks
  *
  * @package    Syngency
  * @subpackage Syngency/admin
@@ -51,6 +50,7 @@ class Syngency_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
         $this->options = get_option( 'syngency_options' );
+        $this->defaults = [];
 
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'page_init' ) );
@@ -83,16 +83,12 @@ class Syngency_Admin {
             'large' => 'Large'
         ];
 
-        // Template defaults
+        // Load default templates
         $templates = ['division','model'];
         foreach ( $templates as $template ) {
-            if ( !isset($this->option[$template . 'template']) || empty($this->option[$template . '_template']) ) {
-                $template_path = plugin_dir_url( __FILE__ ) . 'templates/' . $template . '-default.liquid';
-                if ( file_exists($template_path) ) {
-                    $template_data = fopen($template_path, "r") or die("Unable to read default tempalte file: " . $template_path);
-                    $this->option[$template . '_template'] = fread($template_data,filesize($template_path));
-                    fclose($template_data);
-                }
+            $template_path = plugin_dir_path( __FILE__ ) . 'templates/' . $template . '-default.liquid';
+            if ( file_exists($template_path) ) {
+                $this->defaults[$template . '_template'] = file_get_contents($template_path);
             }
         }
     }
@@ -348,13 +344,13 @@ class Syngency_Admin {
 
     public function division_template_callback()
     {
-        $val = isset( $this->options['division_template'] ) ? $this->options['division_template'] : '';
+        $val = (!isset($this->options['division_template']) || empty($this->options['division_template'])) ? $this->defaults['division_template'] : $this->options['division_template'];
         echo '<textarea name="syngency_options[division_template]" id="syngency-division-template">' . esc_textarea($val) . '</textarea>';
     }
 
     public function model_template_callback()
     {
-        $val = isset( $this->options['model_template'] ) ? $this->options['model_template'] : '';
+        $val = (!isset($this->options['model_template']) || empty($this->options['model_template'])) ? $this->defaults['model_template'] : $this->options['model_template'];
         echo '<textarea name="syngency_options[model_template]" id="syngency-model-template">' . esc_textarea($val) . '</textarea>';
     }
 
@@ -365,8 +361,6 @@ class Syngency_Admin {
 	 */
 	public function enqueue_styles() {
         wp_enqueue_style('wp-codemirror');
-		//wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syngency.css', array(), $this->version, 'all' );
-
 	}
 
 	/**

@@ -15,8 +15,7 @@ use Liquid\Template;
 /**
  * The public-facing functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
+ * Defines the plugin nam and  version
  *
  * @package    Syngency
  * @subpackage Syngency/public
