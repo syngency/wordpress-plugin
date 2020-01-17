@@ -46,6 +46,8 @@ The **Division** and **Model** templates use a combination of HTML, CSS, [Liquid
 
 `[syngency division="fashion-models"]`
 
-Additionally, `office_id` and gender (men/women/boys/girls/non-binary) can be added to filter the division results:
+Additionally, the `office` attribute, and division gender filter (men/women/boys/girls/non-binary) can be added to filter the division results:
 
-`[syngency division="fashion-models/women" office-id="138"]`
+`[syngency office="chicago" division="fashion-models/women"]`
+
+The `office` attribute must be the name of the associated office subdomain you have added under **Settings > Domains** in Syngency.

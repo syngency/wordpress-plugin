@@ -116,25 +116,21 @@ class Syngency_Public {
 			return false;
 		}
 
-		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division'];
-		$request_params = [];
+		// Build request URL
+        $request_url = 'http://';
+        
+        // Office
+        if ( isset($atts['office']) ) {
+            $request_url .= $atts['office'] . '.';
+        }
+        $request_url .= $this->options['domain'] . '/divisions/' . $atts['division'];
 
-		// Gender
-		if ( isset($atts['gender']) ) {
-			$request_url .= '/' . $atts['gender']; 
-		}
+        // Gender
+        if ( isset($atts['gender']) ) {
+            $request_url .= '/' . $atts['gender']; 
+        }
 
-		$request_url .= '.json';
-
-		// Office
-		if ( isset($atts['office_id']) ) {
-			$request_params['office_id'] = $atts['office-id'];
-		}
-
-		// Add params
-		if ( count($request_params) ) {
-			$request_url .= '?' . http_build_query($request_params);
-		}
+        $request_url .= '.json';
 		
 		$request_args = array(
 		  'headers' => array(
