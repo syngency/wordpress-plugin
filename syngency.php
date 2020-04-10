@@ -10,8 +10,8 @@
  * @syngency-wordpress-plugin
  * Plugin Name:       Syngency
  * Plugin URI:        https://github.com/syngency/wordpress-plugin
- * Description:       Displays your Syngency divisions, models, and galleries on your WordPress site
- * Version:           1.2.0
+ * Description:       Displays Syngency divisions, models, and galleries on your WordPress site
+ * Version:           1.3.0
  * Author:            Syngency
  * Author URI:        http://syngency.com/
  * License:           GPL-2.0+

@@ -54,7 +54,15 @@ class Syngency_Public {
 		$this->version = $version;
 		$this->options = get_option('syngency_options');
 
+		// Register shortcode - [syngency division="division-url" office="office-url"]
 		add_shortcode('syngency', array($this, 'router'));
+
+		// Catch query vars
+		add_filter('query_vars', function($vars) {
+		    $vars[] = "model";
+		    return $vars;
+		});
+
 	}
 
 	/**
@@ -84,17 +92,11 @@ class Syngency_Public {
 	 */
 	public function router( $atts ) {
 
-		// Surely WordPress provides a more elegant way of checking this
-		$url = explode('/',rtrim($_SERVER['REQUEST_URI'],'/'));
-		$last_segment = end($url);
-		$real_permalink = explode('/',rtrim(get_permalink(),'/'));
-		$real_last_segment = end($real_permalink);
-
         // Render HTML output
         ob_start();
-		if ( $last_segment !== $real_last_segment ) {
+		if ( get_query_var('model') ) {
 			// Model Portfolio
-			$atts['model'] = $last_segment;
+			$atts['model'] = get_query_var('model');
 			$this->get_model($atts);
 		} else {
 			// Division
@@ -146,14 +148,9 @@ class Syngency_Public {
 				case 200:
 					$body = wp_remote_retrieve_body($response);
 					$models = json_decode($body);
-					
-					// Register endpoints
 					foreach ( $models as $model ) {
-						$endpoint = basename($model->url);
 						$model->url = get_permalink() . basename($model->url);
-						add_rewrite_endpoint( $endpoint, EP_PAGES );
 					}
-					flush_rewrite_rules();
 					$output = $this->render_template('division',array('options' => $this->options, 'models' => $models));
 				break;
 				case 401:

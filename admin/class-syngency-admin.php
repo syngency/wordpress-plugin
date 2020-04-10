@@ -144,7 +144,7 @@ class Syngency_Admin {
             'API Settings',
             array( $this, 'api_settings_info' ),
             'syngency-admin'
-        );  
+        );
 
         add_settings_field(
             'domain',
@@ -218,6 +218,15 @@ class Syngency_Admin {
             array( $this, 'model_template_callback' ),
             'syngency-admin', 
             'wordpress_templates'
+        );
+
+        // DIVISIONS
+
+        add_settings_section(
+            'divisions',
+            'Divisions',
+            array( $this, 'divisions_list' ),
+            'syngency-admin'
         );
         
     }
@@ -352,6 +361,74 @@ class Syngency_Admin {
     {
         $val = (!isset($this->options['model_template']) || empty($this->options['model_template'])) ? $this->defaults['model_template'] : $this->options['model_template'];
         echo '<textarea name="syngency_options[model_template]" id="syngency-model-template">' . esc_textarea($val) . '</textarea>';
+    }
+
+    /**
+     * Divisions
+     */
+
+    public function get_shortcode_attributes($shortcode_html)
+    {
+        $attributes = [];
+        preg_match_all('/(\w+)\s*=\s*"(.*?)"/i', $shortcode_html, $matches);
+        for ($i = 0; $i < count($matches[1]); $i++) {
+            $attributes[$matches[1][$i]] = $matches[2][$i];
+        }
+        return $attributes;
+    }
+
+    public function divisions_list()
+    {
+        global $wpdb;
+
+        $request_url = 'http://' . $this->options['domain'] . '/divisions.json';
+        $request_args = array(
+          'headers' => array(
+            'Authorization' => 'API-Key ' . $this->options['api_key']
+          ),
+          'timeout' => 30
+        );
+        $response = wp_remote_get( $request_url, $request_args );
+        if ( is_wp_error( $response ) ) {
+            echo '<pre>Wordpress Error: ' . $response->get_error_message() . '</pre>';
+        } else {
+            if ( wp_remote_retrieve_response_code($response) == 200 ) {
+                $body = wp_remote_retrieve_body($response); 
+                $divisions = json_decode($body);
+            } else {
+                echo "<pre>Could not fetch URL: $request_url</pre>";
+            }
+        }
+
+        $output = '<p>These pages are setup as Syngency divisions:</p>
+                    <table style="width:500px;text-align:left">
+                        <thead>
+                            <tr>
+                                <th>WordPress Page</th>
+                                <th>Syngency Division</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+        $query = "SELECT ID, post_title, post_content, post_name FROM " . $wpdb->posts . " WHERE post_content LIKE '%[syngency%' AND post_status = 'publish' AND post_type = 'page'";
+        $pages = $wpdb->get_results($query);
+        foreach ( $pages as $page ) {
+            
+            // Register endpoint
+            add_rewrite_rule( $page->post_name . '/(.+?)/?$', 'index.php?pagename=' . $page->post_name . '&model=$matches[1]', 'top' );
+
+            $shortcode_attributes = $this->get_shortcode_attributes($page->post_content);
+            $output .= '<tr><td><a href="/wp-admin/post.php?post=' . $page->ID . '&action=edit">' . $page->post_title . '</a></td>';
+            foreach ( $divisions as $division ) {
+                if ( $shortcode_attributes['division'] == $division->url ) {
+                    $output .= '<td>' . $division->name . '</td>';
+                }
+            }
+            $output .= '</tr>';
+        }
+        $output .= '</tbody></table>';
+        flush_rewrite_rules();
+        echo $output;
     }
 
 	/**
