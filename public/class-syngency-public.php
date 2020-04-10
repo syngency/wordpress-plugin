@@ -182,7 +182,14 @@ class Syngency_Public {
 			$atts['division'] = explode('/',$atts['division'])[0];
 		}
 
-		$request_url = 'http://' . $this->options['domain'] . '/divisions/' . $atts['division']. '/portfolios/' . $atts['model'] . '.json';
+		// Build request URL
+        $request_url = 'http://';
+        
+        // Office
+        if ( isset($atts['office']) ) {
+            $request_url .= $atts['office'] . '.';
+        }
+        $request_url .= $this->options['domain'] . '/divisions/' . $atts['division'] . '/portfolios/' . $atts['model'] . '.json';
 		$request_args = array(
 		  'headers' => array(
 		    'Authorization' => 'API-Key ' . $this->options['api_key']
@@ -197,6 +204,7 @@ class Syngency_Public {
 				case 200:
 					$body = wp_remote_retrieve_body($response);	
 					$model = json_decode($body);
+					$model->request_url = $request_url;
 					// Set link url for galleries
 					if ( isset($model->galleries) ) {
 						foreach ( $model->galleries as $gallery ) {
