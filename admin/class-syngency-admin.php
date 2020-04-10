@@ -12,47 +12,47 @@
 
 class Syngency_Admin {
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
+    /**
+     * The ID of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $plugin_name    The ID of this plugin.
+     */
+    private $plugin_name;
 
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
+    /**
+     * The version of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $version    The current version of this plugin.
+     */
+    private $version;
 
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	
-	/**
+    /**
+     * Initialize the class and set its properties.
+     *
+     * @since    1.0.0
+     * @param      string    $plugin_name       The name of this plugin.
+     * @param      string    $version    The version of this plugin.
+     */
+    
+    /**
      * Holds the values to be used in the fields callbacks
      */
     private $options;
     private $measurements;
     private $image_sizes;
 
-	public function __construct( $plugin_name, $version ) {
+    public function __construct( $plugin_name, $version ) {
 
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+        $this->plugin_name = $plugin_name;
+        $this->version = $version;
         $this->options = get_option( 'syngency_options' );
         $this->defaults = [];
 
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+        add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'page_init' ) );
 
         // Measurement options
@@ -93,7 +93,7 @@ class Syngency_Admin {
         }
     }
 
-	/**
+    /**
      * Add options page
      */
     public function add_settings_page()
@@ -224,7 +224,7 @@ class Syngency_Admin {
 
         add_settings_section(
             'divisions',
-            'Divisions',
+            'Division Mapping',
             array( $this, 'divisions_list' ),
             'syngency-admin'
         );
@@ -400,11 +400,26 @@ class Syngency_Admin {
             }
         }
 
-        $output = '<p>These pages are setup as Syngency divisions:</p>
-                    <table style="width:500px;text-align:left">
+        $output = '<p>These pages are registered as Syngency divisions:</p>
+                    <style>
+                        .syngency-table {
+                            width: 50%;
+                        }
+                        .syngency-table th {
+                            text-align: left;
+                        }
+                        .syngency-table td {
+                            vertical-align: top;
+                        }
+                        .syngency-table td pre {
+                            margin: 0;
+                        }
+                    </style>
+                    <table class="syngency-table">
                         <thead>
                             <tr>
                                 <th>WordPress Page</th>
+                                <th>Parameters</th>
                                 <th>Syngency Division</th>
                             </tr>
                         </thead>
@@ -418,38 +433,45 @@ class Syngency_Admin {
             add_rewrite_rule( $page->post_name . '/(.+?)/?$', 'index.php?pagename=' . $page->post_name . '&model=$matches[1]', 'top' );
 
             $shortcode_attributes = $this->get_shortcode_attributes($page->post_content);
-            $output .= '<tr><td><a href="/wp-admin/post.php?post=' . $page->ID . '&action=edit">' . $page->post_title . '</a></td>';
+            $output .= '<tr><td><a href="post.php?post=' . $page->ID . '&action=edit" target="_blank">' . $page->post_title . '</a></td>
+            <td><pre>Division: ' . $shortcode_attributes['division'] . '</pre>';
+            if ( isset($shortcode_attributes['office']) ) {
+                $output .= '<pre>Office: ' . $shortcode_attributes['office'] . '</pre>';
+            }
+            $output .= '</td><td>';
+            
             foreach ( $divisions as $division ) {
-                if ( $shortcode_attributes['division'] == $division->url ) {
-                    $output .= '<td>' . $division->name . '</td>';
+                $shortcode_division = explode('/',$shortcode_attributes['division'])[0];
+                if ( $shortcode_division == $division->url ) {
+                    $output .= $division->name;
                 }
             }
-            $output .= '</tr>';
+            $output .= '</td></tr>';
         }
         $output .= '</tbody></table>';
         flush_rewrite_rules();
         echo $output;
     }
 
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
+    /**
+     * Register the stylesheets for the admin area.
+     *
+     * @since    1.0.0
+     */
+    public function enqueue_styles() {
         wp_enqueue_style('wp-codemirror');
-	}
+    }
 
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
+    /**
+     * Register the JavaScript for the admin area.
+     *
+     * @since    1.0.0
+     */
+    public function enqueue_scripts() {
         $cm_settings['codeEditor'] = wp_enqueue_code_editor(array('type' => 'text/html'));
         wp_localize_script('jquery', 'cm_settings', $cm_settings);
         wp_enqueue_script('wp-theme-plugin-editor');
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
-	}
+        wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syngency.js', array( 'jquery' ), $this->version, false );
+    }
 
 }
